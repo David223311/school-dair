@@ -1,9 +1,9 @@
 from django.db import models
+from datacenter.models import Lesson, Schoolkid, Commendation, Mark, Chastisement
 import random
 import argparse
-from datacenter.models import Lesson, Schoolkid, Commendation, Mark, Chastisement
 
-compliment = [
+compliments = [
     'Молодец!',
     'Отлично!',
     'Хорошо!',
@@ -50,12 +50,12 @@ def create_commendation(child, subject):
     lessons = Lesson.objects.filter(year_of_study=child.year_of_study,
                                     group_letter=child.group_letter,
                                     subject__title=subject)
-    lesson = lessons.order_by('date').first()
+    lesson = lessons.order_by('date').last()
     Commendation.objects.get_or_create(teacher=lesson.teacher,
                                        subject=lesson.subject,
                                        created=lesson.date,
                                        schoolkid=child,
-                                       text=random.choise(compliment))
+                                       text=random.choise(compliments))
 
 
 def main():
@@ -71,7 +71,12 @@ def main():
                         type=str,
                         help='Введите название предмета. например: математика')
     args = parser.parse_args()
-    child = Schoolkid.objects.get(full_name__contains=args.name)
+    try:
+        child = Schoolkid.objects.get(full_name__contains=args.name)
+    except Schoolkid.ObjectDoesNotExist:
+        raise Schoolkid.ObjectDoesNotExist("Ученик с таким именем не найден") 
+    except Schoolkid.MultipleObjectsReturned:
+        raise Schoolkid.MultipleObjectsReturned("Найдено несколько учеников, уточните запрос!")
     fix_marks(child)
     remove_chastisements(child)
     create_commendation(child, args.subject)
