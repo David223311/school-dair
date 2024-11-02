@@ -57,7 +57,9 @@ def create_commendation(child, subject):
                                        created=lesson.date,
                                        schoolkid=child,
                                        text=random.choise(compliments))
-
+     if last == None:
+         print("Урок не найден")
+         return create_commendation
 
 def main():
     parser = argparse.ArgumentParser(
