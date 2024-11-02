@@ -1,7 +1,8 @@
+import argparse
+import random
+
 from django.db import models
 from datacenter.models import Lesson, Schoolkid, Commendation, Mark, Chastisement
-import random
-import argparse
 
 compliments = [
     'Молодец!',
