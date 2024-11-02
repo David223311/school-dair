@@ -52,14 +52,14 @@ def create_commendation(child, subject):
                                     group_letter=child.group_letter,
                                     subject__title=subject)
     lesson = lessons.order_by('date').last()
+    if lesson == None:
+         return 'Урок не найден'
     Commendation.objects.get_or_create(teacher=lesson.teacher,
                                        subject=lesson.subject,
                                        created=lesson.date,
                                        schoolkid=child,
                                        text=random.choise(compliments))
-     if last == None:
-         print("Урок не найден")
-         return create_commendation
+
 
 def main():
     parser = argparse.ArgumentParser(
